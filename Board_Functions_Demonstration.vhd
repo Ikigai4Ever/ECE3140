@@ -24,62 +24,68 @@ end board_function;
 architecture behavioral of board_function is
 
     -- Rotary encoder signals
-    signal counter : std_logic_vector(9 downto 0);  -- counter for the rotary encoder
-    signal prev_A  : std_logic := '0';  -- Previous state of Channel A
-    signal prev_B  : std_logic := '0';  -- Previous state of Channel B
+    constant scaling_factor : integer := 4;  -- Scaling factor for the rotary encoder
+    signal counter          : unsigned(9 downto 0) := (OTHERS => '0');  -- counter for the rotary encoder
+    signal prev_A           : std_logic := '0';  -- Previous state of Channel A
+    signal prev_B           : std_logic := '0';  -- Previous state of Channel B
+    signal ChA_Clean        : std_logic; -- Debounced signal for Channel A
+    signal ChB_Clean        : std_logic; -- Debounced signal for Channel B
 
+    -- 7-segment display signals
+    -- signal SEV_SEG      : std_logic_vector(6 downto 0) := (others => '0');  -- 7-segment display output
 
 BEGIN
     -- Process to handle the buzzer output based on button presses
     process(CLK, BUTTON)
     begin
         if rising_edge(CLK) then
-            if BUTTON(5) = '1' then
-                BUZZER <= '1';  -- Turn on buzzer when button U0 is pressed
-            elsif BUTTON(6) = '1' then
-                BUZZER <= '0';  -- Turn off buzzer when button U1 is pressed
-            end if;
-        end if;
-    end process;
-
-    -- Process to control the LEDs based on button presses
-    process(CLK, BUTTON, SWITCH)
-    begin
-        if (SWITCH[9] = '0') then  -- Check if the switch is on
-            if rising_edge(CLK) then
-                LED <= (others => '0');  -- Initialize all LEDs to off
-                for i in 0 to 5 loop
-                    if BUTTON(i) = '1' then
-                        LED(i) <= '1';  -- Turn on corresponding LED when button is pressed
-                    end if;
-                end loop;
+            if BUTTON(4) = '1' then
+                BUZZER <= '1';  -- Turn on buzzer when button U4 is pressed
+            elsif BUTTON(5) = '1' then
+                BUZZER <= '0';  -- Turn off buzzer when button U5 is pressed
             end if;
         end if;
     end process;
 
     -- Process to control the LEDs based on a counter for the rotary encoder
-    rotary_encoder: process(CLK, ChA, ChB, SWITCH)
+    rotary_encoder: process(CLK, ChA, ChB, SWITCH, BUTTON)
     BEGIN 
-        if (SW[9] = '1') then 
-            if rising_edge(CLK) then
-                if (prev_A = '0') and (ChA = '1') then
-                    if (ChB = '0') then -- Clockwise rotation of encoder
+        if rising_edge(CLK)  then 
+            if (SWITCH(9) = '1') then  -- Check if the switch is on
+                if ((prev_A = '0') and (ChA_Clean = '1')) then
+                    if (ChB_Clean = '0') then -- Clockwise rotation of encoder
                         if (counter = 1023) then
-                            counter := 0;  -- Reset counter if it exceeds 1023
+                            counter <=  (OTHERS => '0');  -- Reset counter if it exceeds 1023
                         else
-                            counter := counter + 1;  -- Increment counter on clockwise rotation
+                            counter <= counter + scaling_factor;  -- Increment counter on clockwise rotation
                         end if;
                     else -- Counter clockwise rotation of encoder
                         if (counter = 0) then
-                            counter := 1023;  -- Reset counter if it goes below 0
+                            counter <= (OTHERS => '1');  -- Reset counter if it goes below 0
                         else
-                            counter := counter - 1;  -- Decrement counter on counter-clockwise rotation
+                            counter <= counter - scaling_factor;  -- Decrement counter on counter-clockwise rotation
                         end if;
                     end if;
                 end if;
+                prev_A <= ChA_Clean;  -- Update previous state of Channel A
+                prev_B <= ChA_Clean;  -- Update previous state of Channel B
+                
+                for i in 0 to 9 loop
+                    if (counter(i) = '1') then
+                        LED(i) <= '1';  -- Turn on corresponding LED based on counter value
+                    else
+                        LED(i) <= '0';  -- Turn off other LEDs
+                    end if;
+                end loop;
+
+            else 
+                LED <= (others => '0');  -- Initialize all LEDs to off
+                for i in 0 to 5 loop
+                    if BUTTON(i) = '0' then
+                        LED(i) <= '1';  -- Turn on corresponding LED when button is pressed
+                    end if;
+                end loop;
             end if;
-            prev_A <= ChA;  -- Update previous state of Channel A
-            prev_B <= ChB;  -- Update previous state of Channel B
         end if;
     end process rotary_encoder;
 
@@ -101,4 +107,53 @@ BEGIN
             end case;
         end if;
     end process;
+
+    U0: entity work.Debounce port map (CLK, ChA, ChA_Clean);
+    U1: entity work.Debounce port map (CLK, ChB, ChB_Clean);
 end behavioral;
+
+
+
+
+--Name: Ty Ahrens 
+--Date: 4/12/2025
+--Purpose: Debouncer for Channel A and B of rotary encoder. Takes in the noisy signal
+--         and saves the signal input for each clock cycle to ensure that the signal
+--         is stable.
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Debounce is
+    Port (
+        clk     : in  STD_LOGIC; -- DE10-Lite clock 
+        noisy   : in  STD_LOGIC; -- Input from rotary encoder
+        clean   : out STD_LOGIC  -- Debounced signal from this
+    );
+end Debounce;
+
+architecture Behavioral of Debounce is
+    constant debounce_limit : integer := 50000;  -- 1ms at 50MHz
+    signal counter          : integer range 0 to debounce_limit := 0;
+    signal debounced        : STD_LOGIC := '0';
+    signal last_state       : STD_LOGIC := '0';
+begin
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if noisy /= last_state then
+                counter <= 0;
+            else
+                if counter < debounce_limit then
+                    counter <= counter + 1;
+                else
+                    debounced <= noisy;
+                end if;
+            end if;
+            last_state <= noisy;
+        end if;
+    end process;
+
+    clean <= debounced;  -- set the debounced signal to output back to top_entity
+end Behavioral;
