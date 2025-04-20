@@ -1,0 +1,104 @@
+--         NAME: Ty Ahrens
+--         DATE: 10/25/2023
+--  DESCRIPTION: The purpose of this code is to demonstrate the use of the PCB board that was 
+--               constructed by honors students at the Tennessee Tech University.
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+
+entity board_function is 
+    port (
+        CLK         : IN std_logic;  -- 50 MHz Clock
+        PM_BUTTON   : IN std_logic_vector(1 downto 0);  -- Pannel mounted buttons (MSB is leftmost button)
+        BUTTON      : IN std_logic_vector(5 downto 0);  -- 6 buttons on the board (labeled U0-U5)
+        ChA         : IN std_logic;  -- Encoder Channel A input 
+        ChB         : IN std_logic;  -- Encoder Channel B input
+        SWITCH      : IN std_logic_vector(9 downto 0);  -- 10 switches on the board
+        BUZZER      : OUT std_logic; -- Buzzer output
+        LED         : OUT std_logic_vector(9 downto 0); -- 10 LEDs on the board
+        SEV_SEG     : OUT std_logic_vector(6 downto 0)  -- 7-segment display output 
+    );
+end board_function;
+
+architecture behavioral of board_function is
+
+    -- Rotary encoder signals
+    signal counter : std_logic_vector(9 downto 0);  -- counter for the rotary encoder
+    signal prev_A  : std_logic := '0';  -- Previous state of Channel A
+    signal prev_B  : std_logic := '0';  -- Previous state of Channel B
+
+
+BEGIN
+    -- Process to handle the buzzer output based on button presses
+    process(CLK, BUTTON)
+    begin
+        if rising_edge(CLK) then
+            if BUTTON(5) = '1' then
+                BUZZER <= '1';  -- Turn on buzzer when button U0 is pressed
+            elsif BUTTON(6) = '1' then
+                BUZZER <= '0';  -- Turn off buzzer when button U1 is pressed
+            end if;
+        end if;
+    end process;
+
+    -- Process to control the LEDs based on button presses
+    process(CLK, BUTTON, SWITCH)
+    begin
+        if (SWITCH[9] = '0') then  -- Check if the switch is on
+            if rising_edge(CLK) then
+                LED <= (others => '0');  -- Initialize all LEDs to off
+                for i in 0 to 5 loop
+                    if BUTTON(i) = '1' then
+                        LED(i) <= '1';  -- Turn on corresponding LED when button is pressed
+                    end if;
+                end loop;
+            end if;
+        end if;
+    end process;
+
+    -- Process to control the LEDs based on a counter for the rotary encoder
+    rotary_encoder: process(CLK, ChA, ChB, SWITCH)
+    BEGIN 
+        if (SW[9] = '1') then 
+            if rising_edge(CLK) then
+                if (prev_A = '0') and (ChA = '1') then
+                    if (ChB = '0') then -- Clockwise rotation of encoder
+                        if (counter = 1023) then
+                            counter := 0;  -- Reset counter if it exceeds 1023
+                        else
+                            counter := counter + 1;  -- Increment counter on clockwise rotation
+                        end if;
+                    else -- Counter clockwise rotation of encoder
+                        if (counter = 0) then
+                            counter := 1023;  -- Reset counter if it goes below 0
+                        else
+                            counter := counter - 1;  -- Decrement counter on counter-clockwise rotation
+                        end if;
+                    end if;
+                end if;
+            end if;
+            prev_A <= ChA;  -- Update previous state of Channel A
+            prev_B <= ChB;  -- Update previous state of Channel B
+        end if;
+    end process rotary_encoder;
+
+    -- Process to control the 7-segment display based on PM_BUTTON inputs
+    process(CLK, PM_BUTTON)
+    begin
+        if rising_edge(CLK) then
+            case PM_BUTTON is
+                when "00" =>
+                    SEV_SEG <= "0000001";  -- Display "0"
+                when "01" =>
+                    SEV_SEG <= "1001111";  -- Display "1"
+                when "10" =>
+                    SEV_SEG <= "0010010";  -- Display "2"
+                when "11" =>
+                    SEV_SEG <= "0000110";  -- Display "3"
+                when others =>
+                    SEV_SEG <= "1111111";  -- Turn off display for any other input
+            end case;
+        end if;
+    end process;
+end behavioral;

@@ -1,0 +1,69 @@
+# DE10 50MH Clock
+set_location_assignment PIN_P11 -to CLK
+
+# Rotary Encoder
+set_location_assignment PIN_AA19 -to ChA
+set_location_assignment PIN_AB19 -to ChB
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ChB
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ChB
+
+# JOYSTICK
+
+# BUTTONS
+set_location_assignment PIN_AB5 -to BUTTON[0]
+set_location_assignment PIN_AB6 -to BUTTON[1]
+set_location_assignment PIN_AB7 -to BUTTON[2]
+set_location_assignment PIN_AB8 -to BUTTON[3]
+set_location_assignment PIN_AB9 -to BUTTON[4]
+set_location_assignment PIN_Y10 -to BUTTON[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[5]
+
+
+# BUZZER
+set_location_assignment PIN_AB17 -to BUZZER
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUZZER
+
+# LEDS
+set_location_assignment PIN_A8 -to LED[0]
+set_location_assignment PIN_A8 -to LED[1]
+set_location_assignment PIN_A8 -to LED[2]
+set_location_assignment PIN_A8 -to LED[3]
+set_location_assignment PIN_A8 -to LED[4]
+set_location_assignment PIN_A8 -to LED[5]
+set_location_assignment PIN_A8 -to LED[6]
+set_location_assignment PIN_A8 -to LED[7]
+set_location_assignment PIN_A8 -to LED[8]
+set_location_assignment PIN_A8 -to LED[9]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[8]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[9]
+
+# SEVEN_SEGMENT
+set_location_assignment PIN_C14 -to SEV_SEG[0]
+set_location_assignment PIN_E15 -to SEV_SEG[1]
+set_location_assignment PIN_C15 -to SEV_SEG[2]
+set_location_assignment PIN_C16 -to SEV_SEG[3]
+set_location_assignment PIN_E16 -to SEV_SEG[4]
+set_location_assignment PIN_D17 -to SEV_SEG[5]
+set_location_assignment PIN_C17 -to SEV_SEG[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SEV_SEG[6]
+
+
