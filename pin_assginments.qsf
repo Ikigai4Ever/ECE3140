@@ -16,13 +16,18 @@ set_location_assignment PIN_AB7 -to BUTTON[2]
 set_location_assignment PIN_AB8 -to BUTTON[3]
 set_location_assignment PIN_AB9 -to BUTTON[4]
 set_location_assignment PIN_Y10 -to BUTTON[5]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[0]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[1]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[2]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[3]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[4]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to BUTTON[5]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[0]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[1]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[2]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[3]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[4]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to BUTTON[5]
 
+# PANNEL_MOUNTED_BUTTONS
+set_location_assignment PIN_AA11 -to PM_BUTTON[0]
+set_location_assignment PIN_AA12 -to PM_BUTTON[1]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to PM_BUTTON[0]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to PM_BUTTON[1]
 
 # BUZZER
 set_location_assignment PIN_AB17 -to BUZZER
