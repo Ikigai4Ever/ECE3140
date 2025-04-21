@@ -82,7 +82,9 @@ BEGIN
                 LED <= (others => '0');  -- Initialize all LEDs to off
                 for i in 0 to 5 loop
                     if BUTTON(i) = '0' then
-                        LED(i) <= '1';  -- Turn on corresponding LED when button is pressed
+                        LED(i) <= '0';  -- Turn on corresponding LED when button is pressed
+                    else 
+                        LED(i) <= '1';  -- Turn off other LEDs
                     end if;
                 end loop;
             end if;
