@@ -39,9 +39,9 @@ BEGIN
     process(CLK, BUTTON)
     begin
         if rising_edge(CLK) then
-            if BUTTON(4) = '1' then
+            if BUTTON(5) = '1' then
                 BUZZER <= '1';  -- Turn on buzzer when button U4 is pressed
-            elsif BUTTON(5) = '1' then
+            else 
                 BUZZER <= '0';  -- Turn off buzzer when button U5 is pressed
             end if;
         end if;
